@@ -113,7 +113,7 @@ module.exports = {
       throw new Error("Database cannot be null");
     }
 
-    return new Promise(function(resolve, reject) {      
+    return new Promise(function(resolve, reject) {
       const collection = db.collection(collectionName);
 
       // Find some documents
