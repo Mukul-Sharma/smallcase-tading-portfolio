@@ -43,6 +43,7 @@ router.get("/", async function (req, res, next) {
     techError(res);
   }
 })
+
 router.post("/trade/", async function (req, res, next) {
   try {
 
@@ -182,8 +183,31 @@ router.delete("/trade/:id", async function (req, res, next) {
   }
 })
 
-router.get("/holdings", function (req, res, next) {
+router.get("/holdings", async function (req, res, next) {
+  try {
+    let group = {
+      "_id": "$stock",
+      "average": {
+        "$avg": "$price"
+      }
+    };
+    let trades = await databaseHandler.aggregate(db, "trade", {"type": "buy"}, group);
 
+    console.log(trades);
+
+    if (!trades) {
+      trades = [];
+    }
+
+    res.send({
+      success: true,
+      data: {
+        holdings: trades
+      }
+    })
+  } catch (e) {
+    techError(res);
+  }
 })
 
 router.get("/returns", function (req, res, next) {

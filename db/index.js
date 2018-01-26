@@ -242,18 +242,68 @@ module.exports = {
 
   // Index keys should be like {key: 1} 1 signals true
   indexCollection: function(db, collectionName, indexKeys) {
-    db.collection(collectionName).createIndex(
-      indexKeys,
-      null,
-      function(err, results) {
+
+    if (!collectionName) {
+      throw new Error("Colletion name cannot be empty");
+    }
+
+
+    if (!indexKeys || Object.keys(indexKeys).length == 0) {
+      throw new Error("Indexing requires a valid keys map");
+    }
+
+    if (!db) {
+      throw new Error("Database cannot be null");
+    }
+
+    return new Promise(function(resolve, reject) {
+      db.collection(collectionName).createIndex(
+        indexKeys,
+        null,
+        function(err, results) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results);
+          }
+        }
+      );
+    });
+  },
+
+  aggregate: function(db, collectionName, query, group) {
+
+    if (!collectionName) {
+      throw new Error("Colletion name cannot be empty");
+    }
+
+    if (!query) {
+      query = {};
+    }
+
+    if (!group || Object.keys(group).length == 0) {
+      throw new Error("Grouping requires a valid keys map");
+    }
+
+    if (!db) {
+      throw new Error("Database cannot be null");
+    }
+
+    return new Promise(function(resolve, reject) {
+
+      collection = db.collection(collectionName);
+      collection.aggregate([
+        {"$match": query},
+        {"$group": group}
+      ]).toArray(function(err, results) {
         if (err) {
           reject(err);
         } else {
-          resolve(results);
+          resolve(results)
         }
-      }
-    );
-  }
+      });
 
+    });
+  },
 
 }

@@ -85,3 +85,23 @@ describe('update()', function () {
     })
   })
 });
+
+describe('aggregate()', function () {
+  it ('should return aggregate of all', function () {
+    return db.openDatabase().then(function (database) {
+
+      return db.insertMany(database, "test", [{a: 1}, {a: 2}, {a: 3}]).then(function (r) {
+
+        return db.aggregate(database, "test", {}, {"_id": "$a", "total": {"$sum": 1}}).then(function (r) {
+            expect(r).to.be.ok;
+        });
+
+      }).catch(function (e) {
+        throw e;
+      })
+    }).catch (function (e) {
+      throw e;
+    })
+
+  })
+});

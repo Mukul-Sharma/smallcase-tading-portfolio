@@ -16,7 +16,7 @@ describe('getPrice()', () => {
     return stocks.getPrice().then(function (result) {
       throw new Error("Test should be failing");
     }).catch (function (e) {
-      expect(true).to.be.equal(trueg);
+      expect(true).to.be.equal(true);
     });
   });
 });
