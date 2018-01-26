@@ -1,20 +1,22 @@
 var express = require('express');
 var router = express.Router();
-const databaseHandler = require('../db');
-let db;
+const stocks = require('../stocks');
 
-databaseHandler.openDatabase().then(function (result) {
-  db = result;
-}).catch(e => {
-  console.warn(e);
-});
-
-router.use(function initChecks (req, res, next) {
-  if (!db) {
-    return next(new Error("We are setting up our servers, Please hold on a second"));
-  }
-  next();
-})
+// const databaseHandler = require('../db');
+// let db;
+//
+// databaseHandler.openDatabase().then(function (result) {
+//   db = result;
+// }).catch(e => {
+//   console.warn(e);
+// });
+//
+// router.use(function initChecks (req, res, next) {
+//   if (!db) {
+//     return next(new Error("We are setting up our servers, Please hold on a second"));
+//   }
+//   next();
+// })
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -22,6 +24,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.post("/trade/", function (req, res, next) {
+  let body = req.body;
+  let stock = body.trade;
 
 })
 
