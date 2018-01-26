@@ -82,6 +82,61 @@ router.post("/trade/", async function (req, res, next) {
 
 router.put("/trade/", async function (req, res, next) {
 
+  let body = req.body;
+  let id = body.id;
+
+  if (!id) {
+    res.status(400).send("Missing trade id");
+    return;
+  }
+
+  let amount = body.amount;
+  if (!amount) {
+    amount = 1;
+  }
+  let type = body.type;
+  // update sell price only
+  if (type != "sell") {
+    res.status(403).send("Only sell prices can be updated");
+    return;
+  }
+  let userPrice = body.price;
+
+  let price = body.price;
+  if (!body.price) {
+    // If not passed updated price, Update from api
+    let stock = await stocks.getPrice(stockSymbol);
+    console.log("Current price of " + stockSymbol + " = " + stock.price);
+    price = stock.price;
+  }
+  
+  let tradeEntry = {
+    "user": "currentUserId",
+    "price": price,
+    "amount": amount,
+    "type": type,
+    "time": new Date().toISOString()
+  };
+
+  console.log("Updating trade with id = " + id);
+  try {
+    let result = await databaseHandler.update(db, "trade", {"_id": id}, tradeEntry);
+
+    if (result.result.n > 0) {
+      res.send({
+        success: true,
+        data: result
+      });
+    } else {
+      res.send({
+        success: false,
+        data: {}
+      })
+    }
+  } catch (e) {
+    console.warn(e);
+    techError(res);
+  }
 })
 
 router.delete("/trade/:id", async function (req, res, next) {
