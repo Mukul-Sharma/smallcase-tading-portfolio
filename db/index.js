@@ -1,4 +1,5 @@
-const MongoClient = require('mongodb').MongoClient;
+const mongo = require('mongodb');
+const MongoClient = mongo.MongoClient;
 const assert = require('assert');
 
 // Connection URL
@@ -109,6 +110,10 @@ module.exports = {
       query = {};
     }
 
+    if (query._id) {
+      query._id = new mongo.ObjectID(query._id);
+    }
+
     if (!db) {
       throw new Error("Database cannot be null");
     }
@@ -141,6 +146,11 @@ module.exports = {
       throw new Error("Update must have a valid query");
     }
 
+    if (query._id) {
+      query._id = new mongo.ObjectID(query._id);
+    }
+
+
     if (!db) {
       throw new Error("Database cannot be null");
     }
@@ -172,6 +182,11 @@ module.exports = {
       throw new Error("Update must have a valid query");
     }
 
+    if (query._id) {
+      query._id = new mongo.ObjectID(query._id);
+    }
+
+
     if (!db) {
       throw new Error("Database cannot be null");
     }
@@ -201,6 +216,11 @@ module.exports = {
     if (!query || Object.keys(query).length == 0) {
       throw new Error("Update must have a valid query");
     }
+
+    if (query._id) {
+      query._id = new mongo.ObjectID(query._id);
+    }
+
 
     if (!db) {
       throw new Error("Database cannot be null");
