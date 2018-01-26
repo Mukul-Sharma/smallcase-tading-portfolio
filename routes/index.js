@@ -22,11 +22,27 @@ function techError(res) {
   res.status(500).send(TECH_ERROR_MESSGE);
 }
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.send("Welcome to Smallcase");
-});
+router.get("/", async function (req, res, next) {
+  try {
+    let trades = await databaseHandler.find(db, "trade", {});
+    if (!trades) {
+      trades = [];
+    }
+    tradesBuy = trades.filter((trade) => trade.type == "buy");
+    tradesSell = trades.filter((trade) => trade.type == "sell");
 
+    res.send({
+      success: true,
+      data: {
+        buys: tradesBuy,
+        sells: tradesSell,
+        total: trades.length
+      }
+    })
+  } catch (e) {
+    techError(res);
+  }
+})
 router.post("/trade/", async function (req, res, next) {
   try {
 
@@ -109,7 +125,7 @@ router.put("/trade/", async function (req, res, next) {
     console.log("Current price of " + stockSymbol + " = " + stock.price);
     price = stock.price;
   }
-  
+
   let tradeEntry = {
     "user": "currentUserId",
     "price": price,
@@ -164,10 +180,6 @@ router.delete("/trade/:id", async function (req, res, next) {
     console.warn(e);
     techError(res);
   }
-})
-
-router.get("/portfolio", function (req, res, next) {
-
 })
 
 router.get("/holdings", function (req, res, next) {
