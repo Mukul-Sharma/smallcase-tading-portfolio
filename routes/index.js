@@ -210,8 +210,64 @@ router.get("/holdings", async function (req, res, next) {
   }
 })
 
-router.get("/returns", function (req, res, next) {
+router.get("/returns", async function (req, res, next) {
+  try {
+    let trades = await databaseHandler.find(db, "trade", {"type": "buy"});
+    if (!trades) {
+      res.send({
+        success: true,
+        data: {
+          "return": []
+        }
+      })
+      return;
+    }
 
+    // We will get the current price for each trade using the mock stocks api,
+    // This will be an issue as we scale, We can use sockets instead to push data to user, or
+    // Use pagination (Limit + Skip)
+    // For now, we will keep a cache to store the current price, so that we dont have to compute it redundantly for the same stock
+
+    let stockPrice = {};
+    let results = [];
+
+    trades.forEach(async function (trade, index) {
+      let stock = trade.stock;
+      let currentPrice = stockPrice[stock];
+      if (!currentPrice) {
+        currentPrice = await stocks.getPrice(stock);
+      }
+      let boughtPrice = trade.price;
+      let diff = boughtPrice - currentPrice.price;
+      let returnType = "stable";
+      if (diff < 0) {
+        returnType = "loss";
+      } else if (diff > 0){
+        returnType = "gain";
+      }
+
+      let result = {
+        _id: trade._id,
+        type: returnType,
+        buyPrice: trade.price,
+        currentPrice: currentPrice.price
+      };
+
+      results.push(result);
+
+      if (index == trades.length - 1) {
+        console.log(results);
+        res.send({
+          success: true,
+          data: {
+            "return": results
+          }
+        })
+      }
+    });
+  } catch (e) {
+    techError(res);
+  }
 })
 
 module.exports = router;
