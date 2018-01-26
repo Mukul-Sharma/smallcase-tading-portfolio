@@ -23,13 +23,13 @@ router.get('/', function(req, res, next) {
   res.send("Welcome to Smallcase");
 });
 
-router.post("/trade/", function (req, res, next) {
+router.post("/trade/", async function (req, res, next) {
   let body = req.body;
-  let stock = body.trade;
-
+  let stockSymbol = body.trade;
+  let stock = await stocks.getPrice(stockSymbol);
 })
 
-router.put("/trade/", function (req, res, next) {
+router.put("/trade/", async function (req, res, next) {
 
 })
 
