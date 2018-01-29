@@ -3,7 +3,7 @@ const MongoClient = mongo.MongoClient;
 const assert = require('assert');
 
 // Connection URL
-const url = 'mongodb://localhost:27017';
+const url = 'mongodb://smallcase:smallcase@smallcase-shard-00-00-mdbbt.mongodb.net:27017,smallcase-shard-00-01-mdbbt.mongodb.net:27017,smallcase-shard-00-02-mdbbt.mongodb.net:27017/smallcase?ssl=true&replicaSet=smallcase-shard-0&authSource=admin';
 
 // Database Name
 const defaultDb = 'smallcase';
